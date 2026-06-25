@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery — The Nile Table</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cormorant+SC:wght@300;400;500&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <style>
+      /* ── TOKENS ───────────────────────────────────────────── */
+      :root {
+        --ink: #0d0c0b;
+        --ink-soft: #161412;
+        --gold: #c9a84c;
+        --gold-lite: #e8c97a;
+        --gold-dim: #7a5f28;
+        --cream: #f5efe6;
+        --cream-dim: #c8b89a;
+
+        --display: "Cormorant SC", serif;
+        --serif: "Cormorant Garamond", serif;
+        --sans: "Jost", sans-serif;
+
+        --rule: 1px solid rgba(201, 168, 76, 0.25);
+        --gap: clamp(4rem, 8vw, 7rem);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--ink);
+        color: var(--cream-dim);
+        font-family: var(--serif);
+        font-size: clamp(16px, 1.1vw, 18px);
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ── NAV ──────────────────────────────────────────────── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem clamp(1.5rem, 5vw, 4rem);
+        background: rgba(13, 12, 11, 0.97);
+        border-bottom: var(--rule);
+      }
+      .nav-logo {
+        font-family: var(--display);
+        font-size: 1rem;
+        font-weight: 400;
+        letter-spacing: 0.25em;
+        color: var(--gold);
+        text-transform: uppercase;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        list-style: none;
+        align-items: center;
+      }
+      .nav-links a {
+        font-family: var(--sans);
+        font-size: 0.7rem;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--cream-dim);
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--gold);
+      }
+      .nav-links a.active {
+        color: var(--gold);
+      }
+      .nav-cta {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink);
+        background: var(--gold);
+        padding: 0.55rem 1.4rem;
+        transition: background 0.2s;
+      }
+      .nav-cta:hover {
+        background: var(--gold-lite);
+      }
+      .nav-hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 4px;
+      }
+      .nav-hamburger span {
+        display: block;
+        width: 22px;
+        height: 1px;
+        background: var(--gold);
+      }
+      .mobile-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(13, 12, 11, 0.98);
+        z-index: 99;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2.5rem;
+      }
+      .mobile-menu.open {
+        display: flex;
+      }
+      .mobile-menu a {
+        font-family: var(--display);
+        font-size: 2rem;
+        letter-spacing: 0.15em;
+        color: var(--gold);
+      }
+      .mobile-menu .close-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: var(--gold);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* ── PAGE HEADER ──────────────────────────────────────── */
+      .page-header {
+        padding: 10rem clamp(1.5rem, 5vw, 4rem) 5rem;
+        border-bottom: var(--rule);
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+      .page-eyebrow {
+        font-family: var(--sans);
+        font-size: 0.62rem;
+        font-weight: 400;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1rem;
+      }
+      .page-title {
+        font-family: var(--display);
+        font-size: clamp(3rem, 8vw, 6.5rem);
+        font-weight: 400;
+        line-height: 0.95;
+        color: var(--cream);
+        letter-spacing: 0.03em;
+      }
+      .page-header-right {
+        max-width: 320px;
+      }
+      .page-desc {
+        font-family: var(--serif);
+        font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+        font-style: italic;
+        line-height: 1.85;
+        color: rgba(200, 184, 154, 0.6);
+      }
+
+      /* ── EDITION BLOCK ────────────────────────────────────── */
+      .edition {
+        padding: var(--gap) clamp(1.5rem, 5vw, 4rem);
+        border-bottom: var(--rule);
+      }
+      .edition-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .edition-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+      }
+      .edition-label {
+        font-family: var(--sans);
+        font-size: 0.62rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+      }
+      .edition-title {
+        font-family: var(--display);
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 400;
+        color: var(--cream);
+        line-height: 1.1;
+      }
+      .edition-meta {
+        font-family: var(--sans);
+        font-size: 0.68rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--gold-dim);
+        margin-top: 0.4rem;
+      }
+      .edition-count {
+        font-family: var(--display);
+        font-size: clamp(3rem, 6vw, 5rem);
+        font-weight: 300;
+        color: rgba(201, 168, 76, 0.1);
+        line-height: 1;
+        letter-spacing: 0.05em;
+        flex-shrink: 0;
+      }
+
+      /* ── GALLERY GRID — EDITION I ─────────────────────────── */
+      /* Asymmetric editorial layout: large hero left, stacked right */
+      .gallery-grid-e1 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 400px 280px;
+        gap: 4px;
+      }
+
+      .gallery-cell {
+        overflow: hidden;
+        position: relative;
+        background: #1a1712;
+      }
+
+      .gallery-cell:first-child {
+        grid-column: span 2;
+        grid-row: span 2;
+      }
+
+      .gallery-cell a {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .gallery-cell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.82) sepia(0.15);
+        transition: filter 0.4s, transform 0.5s;
+        display: block;
+      }
+
+      .gallery-cell:hover img {
+        filter: brightness(0.95) sepia(0.05);
+        transform: scale(1.04);
+      }
+
+      .gallery-cell:first-child {
+        grid-row: span 2;
+      }
+      .gallery-cell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.82) sepia(0.15);
+        transition: filter 0.4s, transform 0.5s;
+        display: block;
+      }
+      .gallery-cell:hover img {
+        filter: brightness(0.95) sepia(0.05);
+        transform: scale(1.04);
+      }
+
+      /* ── FUTURE EDITION PLACEHOLDER ──────────────────────── */
+      .edition-placeholder {
+        background: var(--ink-soft);
+        border: 1px dashed rgba(201, 168, 76, 0.2);
+        padding: 4rem 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 1rem;
+        min-height: 280px;
+      }
+      .placeholder-icon {
+        font-family: var(--display);
+        font-size: 3rem;
+        color: rgba(201, 168, 76, 0.15);
+        letter-spacing: 0.1em;
+      }
+      .placeholder-label {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold-dim);
+      }
+      .placeholder-body {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 0.95rem;
+        color: rgba(200, 184, 154, 0.35);
+        max-width: 280px;
+        line-height: 1.7;
+      }
+      .placeholder-cta {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        border: 1px solid var(--gold-dim);
+        padding: 0.65rem 1.5rem;
+        margin-top: 0.5rem;
+        transition: border-color 0.2s, color 0.2s;
+        display: inline-block;
+      }
+      .placeholder-cta:hover {
+        border-color: var(--gold);
+        color: var(--gold-lite);
+      }
+
+      /* ── NILE DIVIDER ─────────────────────────────────────── */
+      .nile-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin: 0 auto;
+        max-width: 300px;
+      }
+      .nile-divider::before,
+      .nile-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-dim),
+          var(--gold),
+          var(--gold-dim),
+          transparent
+        );
+      }
+      .nile-diamond {
+        width: 5px;
+        height: 5px;
+        background: var(--gold);
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+
+      /* ── FOOTER ───────────────────────────────────────────── */
+      footer {
+        border-top: var(--rule);
+        padding: 3rem clamp(1.5rem, 5vw, 4rem);
+      }
+      .footer-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+      .footer-logo {
+        font-family: var(--display);
+        font-size: 1.1rem;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+      }
+      .footer-tagline {
+        font-family: var(--serif);
+        font-size: 0.8rem;
+        font-style: italic;
+        color: rgba(200, 184, 154, 0.4);
+      }
+      .footer-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+      .footer-links a {
+        font-family: var(--sans);
+        font-size: 0.62rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(200, 184, 154, 0.4);
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--gold);
+      }
+      .footer-copy {
+        font-family: var(--sans);
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        color: rgba(200, 184, 154, 0.25);
+        width: 100%;
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: var(--rule);
+      }
+
+      /* ── REVEAL ───────────────────────────────────────────── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* ── RESPONSIVE ───────────────────────────────────────── */
+      @media (max-width: 900px) {
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .page-header-right {
+          max-width: 100%;
+        }
+        .gallery-grid-e1 {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 260px 200px 200px;
+        }
+        .gallery-cell:first-child {
+          grid-row: span 1;
+          grid-column: span 2;
+        }
+        .edition-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+        .edition-count {
+          display: none;
+        }
+        .nav-links,
+        .nav-cta {
+          display: none;
+        }
+        .nav-hamburger {
+          display: flex;
+        }
+      }
+      @media (max-width: 580px) {
+        .gallery-grid-e1 {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto;
+        }
+        .gallery-cell {
+          height: 240px;
+        }
+        .gallery-cell:first-child {
+          grid-column: span 1;
+          height: 300px;
+        }
+        .footer-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .footer-links {
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+  </head>
+
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a href="index.html" class="nav-logo">The Nile Table</a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#events">Events</a></li>
+        <li><a href="gallery.html" class="active">Gallery</a></li>
+        <li><a href="index.html#community">Community</a></li>
+      </ul>
+      <a href="index.html#events" class="nav-cta">Get Tickets</a>
+      <button
+        class="nav-hamburger"
+        aria-label="Open menu"
+        onclick="document.querySelector('.mobile-menu').classList.add('open')"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" role="dialog" aria-label="Navigation">
+      <button
+        class="close-btn"
+        aria-label="Close menu"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+      >
+        ✕
+      </button>
+      <a
+        href="index.html#about"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+        >About</a
+      >
+      <a
+        href="index.html#events"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+        >Events</a
+      >
+      <a
+        href="gallery.html"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+        >Gallery</a
+      >
+      <a
+        href="index.html#community"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+        >Community</a
+      >
+      <a
+        href="index.html#events"
+        class="nav-cta"
+        onclick="document.querySelector('.mobile-menu').classList.remove('open')"
+        >Get Tickets</a
+      >
+    </div>
+
+    <!-- EDITION I -->
+    <section class="edition">
+      <div class="edition-inner">
+        <div class="edition-header reveal">
+          <div>
+            <p class="edition-label">Edition I</p>
+            <h2 class="edition-title">May 30, 2026</h2>
+            <p class="edition-meta">North Carolina · The Inaugural Evening</p>
+          </div>
+          <span class="edition-count">I</span>
+        </div>
+
+        <div class="gallery-grid-e1 reveal" style="transition-delay: 0.1s">
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Speaker-3.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Speaker-3.png"
+                alt="Nile Table Edition I speaker"
+              />
+            </a>
+          </div>
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Guests-2.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Guests-2.png"
+                alt="Nile Table Edition I guests"
+              />
+            </a>
+          </div>
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Guests-3.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Guests-3.png"
+                alt="Nile Table Edition I guests"
+              />
+            </a>
+          </div>
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Guests-1.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Guests-1.png"
+                alt="Nile Table Edition I guests"
+              />
+            </a>
+          </div>
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Speaker-2.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Speaker-2.png"
+                alt="Nile Table Edition I speaker"
+              />
+            </a>
+          </div>
+          <div class="gallery-cell">
+            <a href="images/gallery/Nile-Table-Speaker-1.png" class="glightbox">
+              <img
+                src="images/gallery/Nile-Table-Speaker-1.png"
+                alt="Nile Table Edition I speaker"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIVIDER -->
+    <div style="padding: 3rem clamp(1.5rem, 5vw, 4rem)">
+      <div class="nile-divider reveal">
+        <div class="nile-diamond"></div>
+      </div>
+    </div>
+
+    <!-- EDITION II — PLACEHOLDER -->
+    <section class="edition">
+      <div class="edition-inner">
+        <div class="edition-header reveal">
+          <div>
+            <p class="edition-label">Edition II</p>
+            <h2 class="edition-title">August 2026</h2>
+            <p class="edition-meta">North Carolina · Coming Soon</p>
+          </div>
+          <span class="edition-count">II</span>
+        </div>
+
+        <div class="edition-placeholder reveal" style="transition-delay: 0.1s">
+          <div class="placeholder-icon">II</div>
+          <p class="placeholder-label">Photos Coming After the Event</p>
+          <p class="placeholder-body">
+            The second edition of The Nile Table hasn't happened yet — but you
+            can be in the room when it does.
+          </p>
+          <a href="index.html#events" class="placeholder-cta"
+            >Reserve Your Seat →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- DIVIDER -->
+    <div style="padding: 3rem clamp(1.5rem, 5vw, 4rem)">
+      <div class="nile-divider reveal">
+        <div class="nile-diamond"></div>
+      </div>
+    </div>
+
+    <!-- EDITION III — PLACEHOLDER -->
+    <section class="edition">
+      <div class="edition-inner">
+        <div class="edition-header reveal">
+          <div>
+            <p class="edition-label">Edition III</p>
+            <h2 class="edition-title">December 2026</h2>
+            <p class="edition-meta">North Carolina · Announced</p>
+          </div>
+          <span class="edition-count">III</span>
+        </div>
+
+        <div class="edition-placeholder reveal" style="transition-delay: 0.1s">
+          <div class="placeholder-icon">III</div>
+          <p class="placeholder-label">Details Forthcoming</p>
+          <p class="placeholder-body">
+            The final edition of 2026. Join the community list to be first to
+            know when tickets drop.
+          </p>
+          <a href="index.html#community" class="placeholder-cta"
+            >Get Early Access →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div>
+          <div class="footer-logo">The Nile Table</div>
+          <div class="footer-tagline">Culture · Conversation · Connection</div>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#events">Events</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="index.html#community">Community</a></li>
+          <li><a href="mailto:hello@theniletable.com">Contact</a></li>
+        </ul>
+      </div>
+      <p class="footer-copy">
+        © 2025 The Nile Table. All rights reserved. North Carolina.
+      </p>
+    </footer>
+
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          }),
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      );
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+    </script>
+    <script>
+      const lightbox = GLightbox({ loop: true });
+    </script>
+  </body>
+</html>
